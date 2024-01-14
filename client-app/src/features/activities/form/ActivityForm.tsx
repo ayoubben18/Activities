@@ -1,20 +1,12 @@
 import { Button, Form, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import { ChangeEvent, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  closeForm: () => void;
-  activity: Activity | undefined;
-  createOrEdit: (activity: Activity) => void;
-  submitting: boolean;
-}
-
-const ActivityForm = ({
-  closeForm,
-  activity: selectedActivity,
-  createOrEdit,
-  submitting,
-}: Props) => {
+const ActivityForm = () => {
+  const { activityStore } = useStore();
+  const { selectedActivity, createOrEdit, loading } = activityStore;
   //if there is an id of an activity passed we open to edit not to add
 
   const initialeState = selectedActivity ?? {
@@ -85,18 +77,18 @@ const ActivityForm = ({
           positive
           type="submit"
           content="Submit"
-          disabled={submitting}
+          disabled={loading}
         />
         <Button
           floated="right"
           type="button"
           content="Cancel"
-          onClick={() => closeForm()}
-          disabled={submitting}
+          onClick={activityStore.closeForm}
+          disabled={loading}
         />
       </Form>
     </Segment>
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);
