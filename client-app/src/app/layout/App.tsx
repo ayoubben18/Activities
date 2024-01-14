@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useState } from "react";
-import axios from "axios";
 import { Container } from "semantic-ui-react";
 import { Activity } from "../models/activity";
 import NavBar from "./NavBar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 import { v4 as uuid } from "uuid";
+import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponent";
 
 function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -12,11 +13,20 @@ function App() {
     Activity | undefined
   >(undefined);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
 
   useEffect(() => {
-    axios
-      .get<Activity[]>("http://localhost:5000/api/activities")
-      .then((response) => setActivities(response.data));
+    agent.Activities.list().then((res) => {
+      let activities: Activity[] = [];
+      res.forEach((a: Activity) => {
+        a.date = a.date.split("T")[0];
+        activities.push(a);
+      });
+      setActivities(activities);
+      setLoading(false);
+    });
   }, []);
 
   const handleSelectActivity = (id: string) => {
@@ -37,44 +47,45 @@ function App() {
   };
   const handleCreateOrUpdateActivity = (activity: Activity) => {
     //I'll add it after adding html date picker
-    // try {
-    //   if (activity.id) {
-    //     axios
-    //       .put<Activity>(
-    //         `http://localhost:5000/api/activities/${activity.id}`,
-    //         activity
-    //       )
-    //       .then((response) => {
-    //         setActivities(
-    //           activities.map((x) =>
-    //             x.id === response.data.id ? response.data : x
-    //           )
-    //         );
-    //       });
-    //   } else {
-    //     axios
-    //       .post<Activity>("http://localhost:5000/api/activities", activity)
-    //       .then((response) => {
-    //         setActivities([...activities, response.data]);
-    //       });
-    //   }
-    // } catch (error: any) {
-    //   throw new Error(error.message);
-    // }
-    activity.id
-      ? setActivities([
-          ...activities.filter((x) => x.id !== activity.id),
-          activity,
-        ])
-      : setActivities([...activities, { ...activity, id: uuid() }]);
-
-    setEditMode(false);
-    setSelectedActivity(activity);
+    setSubmitting(true);
+    try {
+      if (activity.id) {
+        agent.Activities.update(activity).then(() => {
+          setActivities([
+            ...activities.filter((x) => x.id !== activity.id),
+            activity,
+          ]);
+          setSelectedActivity(activity);
+          setSubmitting(false);
+          setEditMode(false);
+        });
+      } else {
+        activity.id = uuid();
+        agent.Activities.create(activity).then(() => {
+          setActivities([...activities, activity]);
+          setSelectedActivity(activity);
+          setSubmitting(false);
+          setEditMode(false);
+        });
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   };
 
   const handleDeleteActivity = (id: string) => {
-    setActivities([...activities.filter((activity) => activity.id !== id)]);
+    try {
+      setDeleting(true);
+      agent.Activities.delete(id).then(() => {
+        setActivities([...activities.filter((activity) => activity.id !== id)]);
+        setDeleting(false);
+      });
+    } catch (error) {}
   };
+
+  if (loading) {
+    return <LoadingComponent />;
+  }
 
   return (
     <Fragment>
@@ -90,6 +101,8 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrUpdateActivity}
           deleteActivity={handleDeleteActivity}
+          submitting={submitting}
+          deleting={deleting}
         />
       </Container>
     </Fragment>
