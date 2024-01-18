@@ -4,13 +4,15 @@ import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import ActivityList from "./ActivityList";
+import ActivityFilters from "./ActivityFilters";
 
 const ActivityDashboard = () => {
   const { activityStore } = useStore();
   const { loadingInitial, activityRegistery, loadActivities } = activityStore;
 
   useEffect(() => {
-    if (activityRegistery.size === 0) loadActivities();
+    if (activityRegistery.size === 0 || activityRegistery.size === 1)
+      loadActivities();
   }, [loadActivities, activityRegistery.size]);
 
   if (loadingInitial) {
@@ -23,7 +25,7 @@ const ActivityDashboard = () => {
         <ActivityList />
       </Grid.Column>
       <Grid.Column width="6">
-        <h2 style={{ textAlign: "center" }}>Activity filters</h2>
+        <ActivityFilters />
       </Grid.Column>
     </Grid>
   );
