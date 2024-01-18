@@ -9,7 +9,8 @@ const NavBar = () => {
           <img src="/assets/logo.png" alt="logo" style={{ marginRight: 10 }} />
           Activities
         </Menu.Item>
-        <Menu.Item name="activities" as={NavLink} to="/activities" />
+        <Menu.Item name="Activities" as={NavLink} to="/activities" />
+        <Menu.Item name="Errors" as={NavLink} to="/errors" />
         <Menu.Item>
           <Button
             positive
