@@ -33,7 +33,7 @@ const ActivityDetails = () => {
         <ActivityDetailedChat />
       </Grid.Column>
       <Grid.Column computer={6} tablet={6} mobile={16}>
-        <ActivityDetailedSideBar />
+        <ActivityDetailedSideBar activity={activity} />
       </Grid.Column>
     </Grid>
   );
