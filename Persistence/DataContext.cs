@@ -11,6 +11,7 @@ public class DataContext : IdentityDbContext<AppUser>
 
     public DbSet<Activity> Activities { get; set; }
     public DbSet<ActivityAttenddee> Attendees { get; set; }
+    public DbSet<Photo> Photos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
