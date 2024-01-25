@@ -4,9 +4,6 @@ import agent from "../api/agent";
 import { store } from "./store";
 
 export default class ProfileStore {
-  setDisplayName(displayName: string | undefined) {
-    throw new Error("Method not implemented.");
-  }
   profile: Profile | null = null;
   loadingProfile: boolean = false;
   uploading: boolean = false;

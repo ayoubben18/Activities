@@ -27,7 +27,11 @@ public static class ApplicationServiceExtensions
                 "CorsPolicy",
                 policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                    policy
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:3000");
                 }
             );
         });
@@ -40,6 +44,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         services.Configure<CloudinarySettings>(config.GetSection("CloudinaryName"));
+        services.AddSignalR();
 
         return services;
     }

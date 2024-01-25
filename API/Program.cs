@@ -31,6 +31,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chat");
 
 //middlware : is the logic between the request and generating the response pipline
 using var scope = app.Services.CreateScope();
