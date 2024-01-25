@@ -4,6 +4,9 @@ import agent from "../api/agent";
 import { store } from "./store";
 
 export default class ProfileStore {
+  setDisplayName(displayName: string | undefined) {
+    throw new Error("Method not implemented.");
+  }
   profile: Profile | null = null;
   loadingProfile: boolean = false;
   uploading: boolean = false;
@@ -96,6 +99,27 @@ export default class ProfileStore {
     } finally {
       runInAction(() => {
         this.loadingDelete = false;
+      });
+    }
+  };
+  update = async (profile: Partial<Profile>) => {
+    this.loading = true;
+    try {
+      await agent.Profiles.update(profile);
+      runInAction(() => {
+        if (
+          profile.displayName &&
+          profile.displayName !== store.userStore.user?.displayName
+        ) {
+          store.userStore.setDisplayName(profile.displayName);
+          this.profile = { ...this.profile, ...(profile as Profile) };
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
       });
     }
   };
