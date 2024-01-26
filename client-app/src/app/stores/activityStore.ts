@@ -198,7 +198,20 @@ export default class ActivityStore {
       });
     }
   };
+
   clearSelectedActivity = () => {
     this.selectedActivity = undefined;
+  };
+  updateAttenddeeFollowing = (username: string) => {
+    this.activityRegistery.forEach((activity) => {
+      activity.attenddees.forEach((attenddee) => {
+        if (attenddee.username === username) {
+          attenddee.following
+            ? attenddee.followersCount--
+            : attenddee.followersCount++;
+          attenddee.following = !attenddee.following;
+        }
+      });
+    });
   };
 }
