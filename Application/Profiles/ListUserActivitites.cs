@@ -40,7 +40,7 @@ public class ListUserActivitites
             {
                 "past" => query.Where(a => a.Date <= DateTime.UtcNow),
                 "hosting" => query.Where(a => a.HostUsername == request.Username),
-                _ => query.Where(a => a.Date >= DateTime.Now)
+                _ => query.Where(a => a.Date >= DateTime.UtcNow)
             };
 
             var activities = await query.ToListAsync();
