@@ -26,7 +26,7 @@ const ProfileContent = ({ profile }: Props) => {
       menuItem: "Photos",
       render: () => <ProfilePhotos profile={profile} />,
     },
-    { menuItem: "Events", render: () => <ProfileActivities key={"events"} /> },
+    { menuItem: "Events", render: () => <ProfileActivities /> },
     {
       menuItem: "Followers",
       render: () => <ProfileFollowings />,
